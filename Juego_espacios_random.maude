@@ -1,0 +1,121 @@
+
+fmod CROSSDOT-SYNTAX is
+  protecting NAT .
+  sorts Player Cell State .
+
+  --- Jugadores
+  ops X O : -> Player [ctor] .
+
+  --- Estados posibles de una casilla
+  ops e x o : -> Cell [ctor] .  --- e = empty, x = ocupado por X, o = ocupado por O
+
+  --- Un estado del juego: <turno | tablero>
+  op <_ | _> : Player Board -> State [ctor] .
+
+  --- Un tablero es una lista de casillas
+  sorts Board .
+  subsort Cell < Board .
+  op nil : -> Board [ctor] .
+  op _:_ : Cell Board -> Board [ctor assoc id: nil] .
+endfm
+
+fmod CROSSDOT-ACTIONS is
+  protecting CROSSDOT-SYNTAX .
+  protecting NAT .
+  --- Acción: jugador coloca ficha en posición i
+  sort Action .
+  op _plays_ : Player Nat -> Action [ctor] .
+endfm
+
+mod CROSSDOT-GAME is
+  protecting CROSSDOT-SYNTAX .
+  protecting CROSSDOT-ACTIONS .
+  protecting NAT .
+
+  --- --- --- --- --- --- --- --- --- --- ---
+  --- FUNCIONES AUXILIARES
+  --- --- --- --- --- --- --- --- --- --- ---
+
+  op _[_] : Board Nat -> Cell .
+  op _[_<-_] : Board Nat Cell -> Board .
+  op _asCell : Player -> Cell .
+  op _turn : Player -> Player .
+  op e in-board _ : Board -> Bool .
+  op finished : State -> Bool . 
+  sort Configuration .
+
+  vars B : Board .
+  vars C C' : Cell .
+  var P : Player .
+  var N : Nat .
+  var S : State .
+  --- Acceso al tablero
+  eq ((C : B)[0]) = C .
+  eq ((C : B)[s(N)]) = B[N] .
+  --- Actualización de una celda en el tablero
+  eq ((C : B)[0 <- C']) = C' : B .
+  eq ((C : B)[s(N) <- C']) = C : (B[N <- C']) .
+  eq (nil[N <- C']) = nil .
+
+  --- Conversión de jugador a celda
+  eq X asCell = x .
+  eq O asCell = o .
+  --- Verificar si aun hay espacios vacios
+  eq e in-board nil = false .
+  eq e in-board (e : B) = true .
+  eq e in-board (C : B) = (e in-board B) [owise] .
+
+  --- Cambio de turno
+  eq X turn = O .
+  eq O turn = X .
+  
+  --- El juego termina si no quedan casillas vacías
+  eq finished(< P | B >) = not (e in-board B) .
+
+  --- Operación para cambiar el estado del tablero
+  op step : State Action -> State .
+
+  ceq step(< P | B >, P plays N) = < P turn | B[N <- (P asCell)] >
+    if B[N] == e .		
+
+  --- Regla
+  op {_,_} : State Action -> Configuration [ctor] .
+  op none : -> Action [ctor] .
+
+  rl [play] :
+    { S , P plays N }
+    => { step(S , P plays N) , none } .
+
+endm
+
+mod CROSSDOT-RANDOM-GAME is
+  protecting CROSSDOT-SYNTAX .
+  protecting CROSSDOT-ACTIONS .
+  protecting CROSSDOT-GAME .
+  protecting RANDOM .
+  protecting NAT .
+  --- Variables auxiliares para el tablero y el jugador
+  var B : Board .
+  var P : Player .
+  var N : Nat .
+  --- Ayuda a encontrar una posición vacía de forma aleatoria
+  op find-empty-pos : Board Nat -> Nat .
+
+  --- Elige un número aleatorio entre 0 y 8 (para un tablero 3x3)
+  op rand-pos : -> Nat .
+  eq rand-pos = random(9) .
+  
+  --- Encuentra una posición vacía: si la posición aleatoria N está vacía, la devuelve.
+  --- Si no, se llama a sí misma para intentar con otro número aleatorio.
+  eq find-empty-pos(B, N) = N [if B[N] == e] .
+  eq find-empty-pos(B, N) = find-empty-pos(B, rand-pos) [owise] .
+
+  --- REGLA DE REESCRITURA PARA JUGADAS ALEATORIAS
+  --- Aplica un movimiento aleatorio, sin necesidad de crear una acción separada
+  --- La regla [play-random] ejecuta un solo paso en la simulación
+  rl [play-random] :
+    < P | B >
+    => < P turn | B[(find-empty-pos(B, rand-pos)) <- (P asCell)] >
+    if e in-board B .
+
+endm

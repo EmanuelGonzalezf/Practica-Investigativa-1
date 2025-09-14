@@ -1,0 +1,70 @@
+mod IPD-ANTICIPATION is
+  protecting NAT .
+  protecting INT .
+  protecting BOOL .
+  protecting LIST .  --- Lista para historial
+
+  *** Acciones
+  sorts Action .
+  ops C D : -> Action [ctor] .
+
+  *** Jugadores
+  sorts Player .
+  ops P1 P2 : -> Player [ctor] .
+
+  *** Historial = lista de acciones de ambos jugadores
+  sorts History .
+  op nil : -> History [ctor] .
+  op _;_ : History History -> History [ctor assoc id: nil] .
+
+  *** Un movimiento queda registrado como (A1,A2)
+  sorts Move .
+  op (_,_) : Action Action -> Move [ctor] .
+
+  *** Estado: <Ronda, Historial, PuntosP1, PuntosP2, Horizonte>
+  sorts State .
+  op <_,_,_,_,_> : Nat History Int Int Nat -> State [ctor] .
+
+  *** Pago clásico
+  op payoff : Action Action Player -> Int .
+  eq payoff(C, C, P1) = 3 .
+  eq payoff(C, C, P2) = 3 .
+  eq payoff(C, D, P1) = 0 .
+  eq payoff(C, D, P2) = 5 .
+  eq payoff(D, C, P1) = 5 .
+  eq payoff(D, C, P2) = 0 .
+  eq payoff(D, D, P1) = 1 .
+  eq payoff(D, D, P2) = 1 .
+
+  *** Simulación de jugada para evaluar horizonte
+  op simulate : Nat Action Action Int Int -> Int .
+  --- simulate(H, myAction, rivalAction, myScore, rivalScore)
+  --- aquí simplificado: solo devuelve el payoff inmediato
+  eq simulate(0, A1, A2, Sc1, Sc2) = Sc1 .
+  eq simulate(s N, A1, A2, Sc1, Sc2) =
+    simulate(N, A1, A2, Sc1 + payoff(A1, A2, P1), Sc2 + payoff(A1, A2, P2)) .
+
+  *** Elección racional: elige la acción con mejor utilidad en horizonte H
+  op bestAction : Nat Action -> Action .
+
+  --- Si horizonte = 0, solo mira el payoff inmediato (mejor respuesta)
+  eq bestAction(0, C) = D .   --- contra C conviene D
+  eq bestAction(0, D) = D .   --- contra D conviene D
+
+  --- Si horizonte > 0, se podría extender para probar trayectorias de varias rondas.
+  --- Aquí dejamos un placeholder determinista: prefiere cooperar si el rival cooperó la última vez.
+  eq bestAction(s N, C) = C .
+  eq bestAction(s N, D) = D .
+
+  *** Reglas de evolución
+  rl [step] :
+    < N H P1s P2s Hor >
+    =>
+    let A1 : Action = bestAction(Hor, if H == nil then C else (first(H)) ) in
+    let A2 : Action = bestAction(Hor, if H == nil then C else (first(H)) ) in
+    < N + 1
+      ((A1, A2)) ; H
+      P1s + payoff(A1, A2, P1)
+      P2s + payoff(A1, A2, P2)
+      Hor > .
+endm
