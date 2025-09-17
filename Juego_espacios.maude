@@ -67,7 +67,6 @@ mod CROSSDOT-GAME is
   eq ((C : B)[0 <- C']) = C' : B .
   eq ((C : B)[s(N) <- C']) = C : (B[N <- C']) .
   eq (nil[N <- C']) = nil .
-
   --- Conversión de jugador a celda
   eq X asCell = x .
   eq O asCell = o .
