@@ -124,3 +124,21 @@ maude
 nano Juego_espacios.maude 
 maude
 nano Juego_espacios.maude 
+git
+nano Juego_espacios.maude 
+maude
+nano Juego_espacios.maude 
+nano Juego_espacios
+maude
+git
+git init
+git add Juego_espacios.maude
+git commit -m "Primera versión"
+git branch -M main
+git remote add origin https://github.com/EmanuelGonzalezF/Practica-Investigativa-1.git
+git push -u origin main
+git remote add origin https://github.com/EmanuelGonzalezF/Practica-Investigativa-1.git
+git remote set-url origin https://github.com/EmanuelGonzalezF/Practica-Investigativa-1.git
+git push -u origin main
+git remote set-url origin https://github.com/EmanuelGonzalezf/Practica-Investigativa-1.git
+git push -u origin main
