@@ -142,3 +142,44 @@ git remote set-url origin https://github.com/EmanuelGonzalezF/Practica-Investiga
 git push -u origin main
 git remote set-url origin https://github.com/EmanuelGonzalezf/Practica-Investigativa-1.git
 git push -u origin main
+git status
+git rm 
+git rm .
+git status
+git rm Juego_espacios_random.maude 
+git status
+git add Juego_espacios.maude 
+git status
+git add Juego_espacios.maude 
+git status
+git add .
+git status
+git remote -v
+git add Juego_espacios.maude 
+git status
+git add .
+git status
+nano Juego_espacios.maude 
+git status
+git add Juego_espacios.maude 
+git status
+git commit -m "Primera version"
+git push -u origin main
+git config --global user.name "EmanuelGonzalezf"
+git config --global user.email "emngzx@gmail.com"
+git status
+git push origin main
+ssh-keygen -t ed25519 -C "emngzx@gmail.com"
+cat ~/.ssh/id_ed25519.pub
+ssh -T git@github.com
+git push origin main
+git clone https://github.com/EmanuelGonzalezf/Practica-Investigativa-1.git
+cat ~/.ssh/id_ed25519.pub
+ssh -T git@github.com
+git clone git@github.com:EmanuelGonzalezF/Practica-Investigativa-1.git
+git add Juego_espacios.maude 
+git status
+git add Juego_espacios.maude 
+git add .
+git status
+git push origin main
