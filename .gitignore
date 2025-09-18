@@ -14,3 +14,5 @@ landscape/
 .sudo_as_admin_successful
 wget-hsts
 *.zip
+.wget-hsts
+.landscape/
