@@ -1,3 +1,16 @@
 Practica-Investigativa-1/
 .ssh/
 .ssh/
+.cache/
+landscape/
+.local/
+.bash_history
+.bash_logout
+.bashrc
+.gitconfig
+.lesshst
+.motd_shown
+.profile
+.sudo_as_admin_successful
+wget-hsts
+*.zip
