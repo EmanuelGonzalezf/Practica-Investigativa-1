@@ -2,23 +2,24 @@
 fmod CROSSDOT-SYNTAX is
   protecting NAT .
   sorts Player Cell State Player_List Action .
-  subsort Player < Player_List .  
+  subsorts Player < Player_List < Nat .  
   --- Jugadores
   ops X O : -> Player [ctor] .
   
   --- Lista de jugadores y manipulación de esta para la regla
   op null : -> Player_List .
-  op __ : Player_List Player_List -> Player_List [ctor assoc id: null] .
+  op __ : Player Player_List -> Player_List [ctor assoc id: null] .
   op head : Player_List -> Player .
 
   var P : Player .
   var PL : Player_List .
   
   eq head(P PL) = P .
+  eq head(null) = null .
 
   op reverse : Player_List -> Player_List .
   eq reverse(null) = null .
-  eq reverse(P PL) = PL P .
+  eq reverse(P PL) = reverse(PL) P .
 
   --- Estados posibles de una casilla
   ops e x o : -> Cell [ctor] .  --- e = empty, x = ocupado por X, o = ocupado por O
@@ -53,12 +54,11 @@ mod CROSSDOT-GAME is
   op _turn : Player -> Player .
   op e in-board _ : Board -> Bool .
   op finished : State -> Bool . 
-  sort Configuration .
 
   vars B : Board .
   vars C C' : Cell .
   var P : Player .
-  var N : Nat .
+  vars N Nz : Nat .
   var S : State .
   --- Acceso al tablero
   eq ((C : B)[0]) = C .
@@ -79,6 +79,8 @@ mod CROSSDOT-GAME is
   eq X turn = O .
   eq O turn = X .
   
+  --- 
+
 endm
 
 mod CROSSDOT-RANDOM-GAME is
@@ -95,20 +97,20 @@ mod CROSSDOT-RANDOM-GAME is
   --- Ayuda a encontrar una posición vacía de forma aleatoria
   op find-empty-pos : Board Nat -> Nat .
 
-  --- Elige un número aleatorio entre 0 y N
+  --- Elige un número aleatorio entre 0 y N Cambiar esto si o si
   op rand-pos : -> Nat .
   eq rand-pos = random(9) .
   
   --- Encuentra una posición vacía: si la posición aleatoria N está vacía, la devuelve.
   --- Si no, se llama a sí misma para intentar con otro número aleatorio.
   ceq find-empty-pos(B, N) = N if B[N] == e .
-  eq find-empty-pos(B, N) = find-empty-pos(B, rand-pos) [owise] .
+  eq find-empty-pos(B, N) = find-empty-pos(B, rand-pos rem 9) [owise] .
 
   --- REGLA DE REESCRITURA PARA JUGADAS ALEATORIAS
   --- Muy muy provisional (principalmente buscar cómo especificar la acción del siguiente jugador 
   crl [play-random] :
-    < B : PL : P : P plays rand-pos >
-    => < B[rand-pos <- (P asCell)] : reverse(PL) : head(reverse(PL)) : P plays rand-pos >
+    < B : PL : P : P plays find_empty_pos(N) >
+    => < B[find_empty_pos(N) <- (P asCell)] : reverse(PL) : head(reverse(PL)) rem 2 : A >
     if e in-board B .
 
 endm
