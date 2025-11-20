@@ -1,0 +1,20 @@
+fmod CROSSDOT-SYNTAX is
+  protecting NAT .
+  protecting BOOL .
+  inc SATISFACTION .
+  inc MODEL-CHECKER .
+  inc LTL-SIMPLIFIER .
+
+  
+  sorts Sys Nat_List .
+  subsort Sys < State .
+  subsort Nat < Nat_List .
+  
+  op nil : -> Nat_List [ctor] .
+  op _ _ : Nat_List Nat_List -> Nat_List [ctor assoc id: nil prec 50 gather (E e)] .  
+  
+  op <_,_,_> : Nat_List Nat Bool -> Sys .
+  
+
+endfm
+

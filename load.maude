@@ -1,0 +1,4 @@
+load model-checker .
+load CROSSDOT-SYNTAX .
+load CROSSDOT-PROPERTIES .
+load CROSSDOT-STRATEGIES .

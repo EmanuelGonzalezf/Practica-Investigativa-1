@@ -1,0 +1,103 @@
+fmod CROSSDOT-SYNTAX is
+  protecting NAT .
+  protecting BOOL .
+  inc SATISFACTION .
+  inc MODEL-CHECKER .
+  inc LTL-SIMPLIFIER .
+
+  
+  sorts Sys Nat_List .
+  subsort Sys < State .
+  subsort Nat < Nat_List .
+  
+  op nil : -> Nat_List [ctor] .
+  op _ _ : Nat_List Nat_List -> Nat_List [ctor assoc id: nil prec 50 gather (E e)] .  
+  
+  op <_,_,_> : Nat_List Nat Bool -> Sys .
+  
+
+endfm
+
+mod CROSSDOT-PROPERTIES is 
+  protecting CROSSDOT-SYNTAX .
+
+  var P P' P'' T : Nat .
+  vars B B' : Nat_List . 
+  var W' : Bool .
+  var S : State .
+  --- Verificar que haya un ganador
+  op 3inBoard : Nat_List Nat -> Bool .
+  ceq 3inBoard(B P P' P'' B', P) = true if P = P' /\ P = P'' /\ not (P == 2) .
+  eq 3inBoard(B  P  P'  P''  B', P) = false [owise] .
+ 
+  op win : Nat_List -> Bool . 
+  ceq win(B P P' P'' B') = true if P = P' /\ P = P'' /\ not (P == 2) .
+  eq win (B  P  P'  P''  B') = false [owise] .
+ 
+  op testwin : -> Prop .
+  ceq < B , P , W' > |= testwin = true if W' .
+  
+  op winner : Nat -> Prop .
+  eq (< B 0 0 0 B' , 1 , W' > |= winner(0)) = true .
+  eq < B 1 1 1 B' , 0 , W' > |= winner(1) = true .
+ 
+endm
+
+mod CROSSDOT-STRATEGIES is
+  protecting CROSSDOT-SYNTAX .
+  protecting NAT .
+  protecting BOOL .
+  pr CROSSDOT-PROPERTIES .
+  
+  vars A B : Nat_List .
+  vars N turn P Q : Nat .
+  var W : Bool .
+
+
+  crl[fill-next-R]: 
+	< ( A  P  2  B ) , P  , W > 
+	=> 
+        < (A  P  P  B) , s(P) rem 2 , win(A  P  P  B)  >  
+	if W == false .
+
+  crl[fill-next-L]:
+        < ( A  2  P  B ) , P  , W >
+        =>
+        < (A  P  P  B) , s(P) rem 2 , win(A  P  P  B) > 
+	if W == false .
+
+  crl[fill-iso]:
+        < ( A  2  2  2  B ) , P  , W >
+        =>
+        < (A  2  P  2  B) , s(P) rem 2 , win(A  2  P  2  B) > 
+	if W == false .
+
+  crl[fill-left]:
+        < ( 2  B ) , P , W >
+        =>
+        < ( P  B ) , s(P) rem 2 , win( P  B )  > 
+	if W == false .
+  
+  crl[Defense-I]:
+        < ( A  2  Q  Q  B )  , P , W >
+        =>
+        < (A  P  Q  Q  B )  , s(P) rem 2 , win(A  P  Q  Q  B ) >
+        if not(Q == P)
+	/\ W == false .
+  
+  crl[Defense-C]:
+        < ( A  Q  2  Q  B )  , P , W >
+        =>
+        < (A  Q  P  Q  B)   , s(P) rem 2 , win(A  Q  P  Q  B) >
+        if not(Q == P) 
+	/\ W == false .
+
+  crl[Defense-D]:
+        < ( A  Q  Q  2  B ) , P , W >
+        =>
+        < (A  Q  Q  P  B)   , s(P) rem 2 , win(A  Q  Q  P  B) >
+        if not(Q == ((P))) 
+	/\ W == false .  
+
+endm
+

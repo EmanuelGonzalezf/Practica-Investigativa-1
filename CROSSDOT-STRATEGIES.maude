@@ -1,0 +1,58 @@
+mod CROSSDOT-STRATEGIES is
+  protecting CROSSDOT-SYNTAX .
+  protecting NAT .
+  protecting BOOL .
+  pr CROSSDOT-PROPERTIES .
+  
+  vars A B : Nat_List .
+  vars N turn P Q : Nat .
+  var W : Bool .
+
+
+  crl[fill-next-R]: 
+	< ( A  P  2  B ) , P  , W > 
+	=> 
+        < (A  P  P  B) , s(P) rem 2 , win(A  P  P  B)  >  
+	if W == false .
+
+  crl[fill-next-L]:
+        < ( A  2  P  B ) , P  , W >
+        =>
+        < (A  P  P  B) , s(P) rem 2 , win(A  P  P  B) > 
+	if W == false .
+
+  crl[fill-iso]:
+        < ( A  2  2  2  B ) , P  , W >
+        =>
+        < (A  2  P  2  B) , s(P) rem 2 , win(A  2  P  2  B) > 
+	if W == false .
+
+  crl[fill-left]:
+        < ( 2  B ) , P , W >
+        =>
+        < ( P  B ) , s(P) rem 2 , win( P  B )  > 
+	if W == false .
+  
+  crl[Defense-I]:
+        < ( A  2  Q  Q  B )  , P , W >
+        =>
+        < (A  P  Q  Q  B )  , s(P) rem 2 , win(A  P  Q  Q  B ) >
+        if not(Q == P)
+	/\ W == false .
+  
+  crl[Defense-C]:
+        < ( A  Q  2  Q  B )  , P , W >
+        =>
+        < (A  Q  P  Q  B)   , s(P) rem 2 , win(A  Q  P  Q  B) >
+        if not(Q == P) 
+	/\ W == false .
+
+  crl[Defense-D]:
+        < ( A  Q  Q  2  B ) , P , W >
+        =>
+        < (A  Q  Q  P  B)   , s(P) rem 2 , win(A  Q  Q  P  B) >
+        if not(Q == ((P))) 
+	/\ W == false .  
+
+endm
+

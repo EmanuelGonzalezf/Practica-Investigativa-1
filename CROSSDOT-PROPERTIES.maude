@@ -1,0 +1,24 @@
+mod CROSSDOT-PROPERTIES is 
+  protecting CROSSDOT-SYNTAX .
+
+  var P P' P'' T : Nat .
+  vars B B' : Nat_List . 
+  var W' : Bool .
+  var S : State .
+  --- Verificar que haya un ganador
+  op 3inBoard : Nat_List Nat -> Bool .
+  ceq 3inBoard(B P P' P'' B', P) = true if P = P' /\ P = P'' /\ not (P == 2) .
+  eq 3inBoard(B  P  P'  P''  B', P) = false [owise] .
+ 
+  op win : Nat_List -> Bool . 
+  ceq win(B P P' P'' B') = true if P = P' /\ P = P'' /\ not (P == 2) .
+  eq win (B  P  P'  P''  B') = false [owise] .
+ 
+  op testwin : -> Prop .
+  ceq < B , P , W' > |= testwin = true if W' .
+  
+  op winner : Nat -> Prop .
+  eq (< B 0 0 0 B' , 1 , W' > |= winner(0)) = true .
+  eq < B 1 1 1 B' , 0 , W' > |= winner(1) = true .
+ 
+endm
