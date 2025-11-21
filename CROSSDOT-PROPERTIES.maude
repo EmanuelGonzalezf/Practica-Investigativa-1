@@ -5,11 +5,11 @@ mod CROSSDOT-PROPERTIES is
   vars B B' : Nat_List . 
   var W' : Bool .
   var S : State .
-  --- Verificar que haya un ganador
+  --- Verify there is a winner
   op 3inBoard : Nat_List Nat -> Bool .
   ceq 3inBoard(B P P' P'' B', P) = true if P = P' /\ P = P'' /\ not (P == 2) .
   eq 3inBoard(B  P  P'  P''  B', P) = false [owise] .
- 
+  
   op win : Nat_List -> Bool . 
   ceq win(B P P' P'' B') = true if P = P' /\ P = P'' /\ not (P == 2) .
   eq win (B  P  P'  P''  B') = false [owise] .

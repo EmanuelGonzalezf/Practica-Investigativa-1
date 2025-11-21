@@ -1,15 +1,21 @@
 --- Los números "2" representan espacios vacíos
 --- Los números "0" representan casillas ocupadas por el jugador 0
 --- Los números "1" representan casillas ocupadas por el jugador 1
+--- The numbers "2" represent empty spaces
+--- The numbers "0" represent spaces occupied by player 0
+--- The numbers "1" represent spaces occupied by player 1
 
 --- Buscar un estado alcanzable donde haya un ganador desde un tablero inicial vacío de 6 espacios
+--- Search for a reachable state where there is a winner from an initial empty board of 6 spaces
 search < (2 2 2 2 2 2), 0 , false > =>* < B:Nat_List , P:Nat , W:Bool > such that W == true .
 
 
 --- Verificar que en todos los estados alcanzables desde un tablero inicial vacío de 6 espacios, si hay un ganador, entonces es el jugador 0 o el jugador 1
+--- Verify that in all reachable states from an initial empty board of 6 spaces, if there is a winner, then it is player 0 or player 1
 red modelCheck(< (2 2 2 2 2 2), 0 , false >, [] (testwin -> winner(0) \/ winner(1))) .
 
 
 --- Buscar un estado alcanzable donde ambos jugadores hayan ganado (lo cual no debería ser posible)
+--- Search for a reachable state where both players have won (which should not be possible)
 search <(2 2 2 2 2 2), 0, false> =>* <B:Nat_List,P:Nat,W:Bool>
 such that 3inBoard(B , 1) and 3inBoard(B , 0) .
